@@ -1,0 +1,41 @@
+import torch
+import numpy as np
+
+def softmax(x):
+  return torch.exp(x)/torch.sum(torch.exp(x), dim=1).view(-1, 1)
+
+def norm(x):
+  return (x)/torch.sum(x, dim=1).view(-1, 1)
+
+def SelfAttention(queries,keys,values,mask=None):
+    scores = queries*keys
+    scores = norm(scores)
+    if mask is not None:
+      scores+=-1e9 * mask
+    weights = softmax(scores)
+    return weights*values
+
+
+def MHSA(query,key,values):
+  #Convert to linear
+  query = query.view(query.shape[0],-1)
+  key = key.view(key.shape[0],-1)
+  values = values.view(values.shape[0],-1)
+  sa = SelfAttention(query,key,values)
+  sa = sa.view(sa.shape[0],-1)
+  return sa
+
+from numpy import random
+batch_size=64
+h = 8  # Number of self-attention heads
+d_k = 64  # Dimensionality of the linearly projected queries and keys
+d_v = 64  # Dimensionality of the linearly projected values
+d_model = 512  # Dimensionality of the model sub-layers' outputs
+input_seq_length = 5  # Maximum length of the input sequence\
+queries = torch.rand((batch_size, input_seq_length, d_k))
+#print(queries.shape)
+keys = torch.rand((batch_size, input_seq_length, d_k))
+values = torch.rand((batch_size, input_seq_length, d_v))
+
+
+MHSA(queries,keys,values)
