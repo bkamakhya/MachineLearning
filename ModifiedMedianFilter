@@ -1,0 +1,170 @@
+import cv2
+import matplotlib.pyplot as plt
+
+from PIL import Image,ImageFilter
+import numpy
+img = Image.open("drive/MyDrive/Sem1/data/lena_color.jpg").convert("L")
+median_blur_image = img.filter(ImageFilter.BoxBlur(4))
+plt.imshow(median_blur_image,cmap = 'gray')
+plt.show()
+arr = numpy.array(img)
+
+#Noisy image
+
+
+#Original image
+plt.imshow(img,cmap = 'gray')
+
+
+arr = numpy.array(median_blur_image)
+
+d=5
+i=2
+j=2
+x=2
+import math
+def graydifffn(d,i,j,theta):
+  w=0
+  z = 0
+  x = int(d/2)
+  graydiff = np.zeros([d+1,d+1])
+  for k in range(-x,x,1) :
+    while w <=d:
+      z=0
+      for l in range(-x,x,1):
+        while z<=d:
+
+          #print(k,l)
+          #print(w,z,arr[i,j]-arr[i+k,j+l])
+          graydiff[w,z] = arr[i+int(k*math.cos(theta)),j+int(l*math.cos(theta))]-arr[i,j]
+          #print(graydiff[w,z])
+          z+=1
+      w+=1   
+  #print(graydiff)
+  return graydiff
+
+def ifnoisy(i,j,T=4000):
+  temp = np.zeros(3)
+  k=0
+  for d in [3,5,7]:
+    temp[k] = np.sum(graydifffn(d,i,j,math.radians(0)))
+    k+=1
+  #print(temp)
+  #T = 4000
+  if temp.min()<T:
+    return temp.min()
+  else:
+    print("Noisy pixel",temp.min())
+    return True
+
+
+
+d=5
+i=2
+j=2
+x=2
+import math
+def getnfreen(d,i,j,theta):
+  
+  w=0
+  z = 0
+  x = int(d/2)
+  sum=0
+  count = 0
+  for k in range(-x,x,1) :
+      for l in range(-x,x,1):
+        print(ifnoisy(k,l))
+        if ifnoisy(k,l) is True:
+          pass
+        else:
+          sum+=ifnoisy(k,l)
+          count+=1   
+          #print(sum,count)
+  #print(graydiff)
+
+  print("Sum of neighbours",sum/count)
+  return sum/count
+
+
+
+arr = numpy.array(median_blur_image)
+getnfreen(3,2,2,math.radians(0))
+
+noisefreeimg = Image.fromarray(arr)
+plt.imshow(noisefreeimg,cmap='gray')
+
+import numpy as np
+d=5
+i=2
+j=2
+x=2
+temp = np.zeros(3)
+k=0
+for d in [3,5,7]:
+  temp[k] = np.sum(graydifffn(d,i,j,math.radians(0)))
+  k+=1
+print(temp)
+T = 4000
+if temp.min()>T:
+  #Noisy pixel
+  print(temp.min)
+  print(getnfreen(d,i,j,math.radians(0)).min())
+else:
+  #Noise free pixel
+  print("Not noisy")
+
+import numpy as np
+d=3
+x = int(d/2)
+
+for i in range(x,arr.shape[0]-x):
+  for j in range(x,arr.shape[1]-x):
+    graydiff = np.zeros([d,d])
+    for k in range(0,d,2):
+      for l in range(0,d,2):
+        print(k,l)
+        if (k == 0 and l==0):
+          graydiff[k,l] = arr[i+int(k/2),j+int(l/2)]-arr[i,j]
+        else:
+          graydiff[k,l] = arr[i+int(k/2),j+int(l/2)]-arr[i,j]
+          if (k+1!=d and l+1!=d):
+            graydiff[k+1,l+1] = arr[i-int(k/2),j-int(l/2)]-arr[i,j]
+    print(graydiff)
+
+
+
+
+import numpy
+from PIL import Image
+
+
+def median_filter(data, filter_size):
+    temp = []
+    indexer = filter_size // 2
+    data_final = []
+    data_final = numpy.zeros((len(data),len(data[0])))
+    for i in range(len(data)):
+
+        for j in range(len(data[0])):
+
+            for z in range(filter_size):
+                if i + z - indexer < 0 or i + z - indexer > len(data) - 1:
+                    for c in range(filter_size):
+                        temp.append(0)
+                else:
+                    if j + z - indexer < 0 or j + indexer > len(data[0]) - 1:
+                        temp.append(0)
+                    else:
+                        for k in range(filter_size):
+                            temp.append(data[i + z - indexer][j + k - indexer])
+
+            temp.sort()
+            data_final[i][j] = temp[len(temp) // 2]
+            temp = []
+    return data_final
+
+
+removed_noise = median_filter(arr, 3) 
+img1 = Image.fromarray(removed_noise)
+
+plt.imshow(img1,cmap='gray')
