@@ -1,0 +1,73 @@
+import numpy as np
+import pandas as pd
+import math
+df = pd.read_csv("iris.csv")
+df
+
+df.columns
+
+df.loc[0]
+
+q = [1,2,3,4]
+
+len(df)
+
+x={}      # Dictionary
+x["s"]  = [0,1]
+x["a"]  = [2,3]
+print(x)
+print(x["s"][0])
+
+dist = {}
+
+for i in range(0,len(df)):
+  dist[df.loc[i]["species"]] = []
+
+
+for i in range(0,len(df)):
+  dist[df.loc[i]["species"]].append(math.pow(df.loc[i]["sepal_length"] - q[0], 2) + math.pow(df.loc[i]["sepal_width"] - q[1], 2) + math.pow(df.loc[i]["petal_length"] - q[2], 2) + math.pow(df.loc[i]["petal_width"] - q[3], 2))
+  #print(dist)
+
+print(dist["setosa"])
+print(dist["virginica"])
+print(dist["versicolor"])
+
+dist["setosa"].sort()
+dist["virginica"].sort()
+dist["versicolor"].sort()
+
+print(dist["setosa"])
+print(dist["virginica"])
+print(dist["versicolor"])
+
+classes=["setosa","virginica","versicolor"]
+
+k=3
+x=0
+y=0
+z=0
+min = 100000
+result = []
+for index in range(k):
+  for i in classes:
+    if(dist[i][x]<min):
+      min=dist[i][x]
+      temp = i
+  print(min)
+  print(temp)
+  result.append(temp)
+  dist[temp].remove(min)
+  min=1000
+
+print(result)
+
+count={}
+for c in classes:
+  count[c]=0
+max = 0
+for r in result:
+  count[r]+=1
+  if count[r]>max:
+    max=count[r]
+    output=r
+print(output)
