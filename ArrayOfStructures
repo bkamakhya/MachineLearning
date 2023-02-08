@@ -1,0 +1,70 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+#include<string.h>
+struct word{
+  char w[10];
+  int freq;
+};
+int main() {
+    // Write C code here
+    char x[]="This is mnit. This is sp lab.";
+    //printf("%c",x[i]);
+    struct word s[15];
+    int i=0,j=0;
+    for(j=0;j<15;j++){
+        s[j].freq=0;
+        strcpy(s[j].w,"");
+    }
+    j=0;
+    int k=-1,index=-1;
+    char temp[10]="";
+    for(i=0;i<sizeof(x);i++){
+        //printf("%c ",x[i]);
+        if(x[i]==' '){
+            //Check if word already there in struct
+            k=j; //Get no of words stored in struct
+            while(k>=0){
+                if(strcmp(s[k].w,temp)==0){
+                    //printf(" %s Equal\n",temp);
+                    index=k;
+                    k=-1;
+                }
+                else{
+                    k--;
+                }
+            }
+            if(index!=-1){
+                //Value already stored
+                s[index].freq+=1;
+                printf(" %d \n",s[index].freq);
+                index=-1;
+            }
+            else{
+                strcpy(s[j].w,temp); 
+                s[j].freq+=1;
+                //Switch to next word and do count +1
+                printf(" %d \n",s[j].freq);
+                j++;
+            }
+            //Empty temp
+            strcpy(temp,"");
+        }
+        else if(x[i]=='.'){
+            
+            //Do nothing. Check if end of file then add the last word also
+        }
+        else{
+            
+            printf("%c ",x[i]);
+            strncat(temp,&x[i],1);
+            //temp+=(x[i]);
+            //printf("%s\n",temp);
+        }
+    }
+    printf("\n%d\n",j);
+    while(j>=0){
+        printf("%s %d\n",s[j].w,s[j].freq);
+        j--;
+    }
+    return 0;
+}
